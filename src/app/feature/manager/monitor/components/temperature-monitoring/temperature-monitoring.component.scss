@@ -1,0 +1,53 @@
+.cube-scene {
+    position: relative;
+    height: 750px;
+    canvas {
+        // border: 1px solid red;
+    }
+    &__info {
+        position: absolute;
+        top: 30px;
+        left: 40px;
+        background-color: white;
+        border-radius: 5px;
+        padding: 10px 20px;
+        width: 300px;
+        &__title {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        &__storage-name {
+            margin-top: 15px;
+        }
+        &__storage-size, &__temp-info {
+            margin-top: 15px;
+            &__heading {
+                display: flex;
+                justify-content: space-between;
+            }
+            table {
+                margin-top: 10px;
+                width: 100%;
+                border: 1px solid rgba(0, 0, 0, 0.2);
+                border-collapse: collapse;
+                tr {
+                    td {
+                        border: 1px solid rgba(0, 0, 0, 0.2);
+                        border-collapse: collapse;
+                        text-align: center;
+                        width: calc(100% / 3);
+                        div {
+                            height: 25px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+                        .value-td {
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
