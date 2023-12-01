@@ -7,7 +7,7 @@
             Thông tin
         </div>
         <div class="cube-scene__info__storage-name">
-            Tên kho: <b>Kho lạnh abc</b>
+            Tên kho: <b>{{ nameStorage }}</b>
         </div>
         <div class="cube-scene__info__storage-size">
             <div class="cube-scene__info__storage-size__heading">
@@ -22,15 +22,15 @@
                 <tr>
                     <td>
                         <div class="title-td">Dài</div>
-                        <div class="value-td">1</div>
+                        <div class="value-td">{{ sizeStorage.length/10 }}</div>
                     </td>
                     <td>
                         <div class="title-td">Rộng</div>
-                        <div class="value-td">2</div>
+                        <div class="value-td">{{ sizeStorage.width/10 }}</div>
                     </td>
                     <td>
                         <div class="title-td">Cao</div>
-                        <div class="value-td">3</div>
+                        <div class="value-td">{{ sizeStorage.height/10 }}</div>
                     </td>
                 </tr>
             </table>
@@ -48,15 +48,15 @@
                 <tr>
                     <td>
                         <div class="title-td">Min</div>
-                        <div class="value-td">1</div>
+                        <div class="value-td">{{ minTemperature }}</div>
                     </td>
                     <td>
                         <div class="title-td">Max</div>
-                        <div class="value-td">2</div>
+                        <div class="value-td">{{ maxTemperature }}</div>
                     </td>
                     <td>
                         <div class="title-td">Trung bình</div>
-                        <div class="value-td">3</div>
+                        <div class="value-td">{{ averageTemperature }}</div>
                     </td>
                 </tr>
             </table>

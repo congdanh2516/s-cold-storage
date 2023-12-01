@@ -9,15 +9,16 @@ import { environment } from 'src/environments/environment.prod';
 })
 export class MonitoringService {
 
-  url: string = "http://10.10.32.158:8111" //doi lai ip server va gate backend 
+  // url: string = "http://10.10.32.158:8111"
 
   constructor(private http: HttpClient, private authenticationSV: AuthenticationService) { }
 
   //ham tra ve danh sach mang nhiet do
   cubeSceneTemperatureList(idStorage: any) {
-    let api = this.url + `/supervisor/storage_temperatures/faces/${idStorage}/`
+    let api = environment.url + `supervisor/storage_temperatures/faces/${idStorage}/`;
+    let authToken = localStorage.getItem("authToken");
     let header = new HttpHeaders()
-      .set('Authorization', `Bear ${this.authenticationSV.authToken}`);
+      .set('Authorization', `Bearer ${authToken}`);
     return this.http.get(api, {headers: header})
             .pipe(
               tap((data) => {
@@ -25,6 +26,14 @@ export class MonitoringService {
               }),
               catchError(this.handleError)
             )
+  }
+
+  getStorageInfo(idStorage: any) {
+    let api: string = environment.url +  `owner/storages/${idStorage}/`;
+    let authToken = localStorage.getItem("authToken");
+    let header = new HttpHeaders()
+      .set('Authorization', `Bearer ${authToken}`);
+    return this.http.get(api, {headers: header});
   }
 
   signInIoT(account: any) {

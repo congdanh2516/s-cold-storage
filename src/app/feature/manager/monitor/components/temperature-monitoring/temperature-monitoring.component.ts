@@ -16,13 +16,15 @@ export class TemperatureMonitoringComponent {
   sizeStorage: any = {};
   minTemperature: number = 0;
   maxTemperature: number = 0;
+  averageTemperature: number = 0;
+  nameStorage: string = '';
 
   checkConnectIoTLab: boolean =  true; //kiem tra da ket noi trạm cam bien chua
 
   @ViewChild('cubescene') cubeScene: ElementRef;
   
   constructor(private monitoring_sv: MonitoringService, public dialog: MatDialog) {
-      this.openDialog();
+      // this.openDialog();
   }
   openDialog() : void {
     const dialogRef = this.dialog.open(SignInStationComponent, { disableClose: true });
@@ -33,20 +35,35 @@ export class TemperatureMonitoringComponent {
     });
   }
 
-  // getTemperatureList() {
-  //   this.monitoring_sv.cubeSceneTemperatureList("id").subscribe((data: any) => {
-  //     this.temperatureList = data;
-  //     //set size storage, set min maxTemperature
-  //     this.main();
-  //   })
-  // }
+  ngOnInit () {
+    // this.main();
+    this.getTemperatureList();
+  }
+
+  getTemperatureList() {
+    this.monitoring_sv.getStorageInfo(6).subscribe((storageInfo: any) => {
+      this.sizeStorage.length = storageInfo.storage_length;
+      this.sizeStorage.width = storageInfo.storage_width;
+      this.sizeStorage.height = storageInfo.storage_height;
+      this.nameStorage = storageInfo.storage_name;
+      this.monitoring_sv.cubeSceneTemperatureList(6).subscribe((data: any) => {
+        this.minTemperature = Math.ceil(data.minimun_temperature);
+        this.maxTemperature = Math.ceil(data.maximun_temperature);
+        this.averageTemperature = Math.ceil(data.average_temperature);
+        console.log("cube scene temperature list: ", data);
+        this.temperatureList = data.temperatures;
+        this.main();
+      })
+    })
+  }
 
 
   main() {
+    console.log("main: ", this.temperatureList);
     const canvas: any = document.querySelector('#cubescene');
     console.log("canvas: ", canvas);
-    const renderer = new THREE.WebGLRenderer({canvas: this.cubeScene.nativeElement, alpha: true});
-    renderer.setSize(1920, 700);
+    const renderer = new THREE.WebGLRenderer({canvas: canvas, alpha: true});
+    renderer.setSize(window.innerWidth, 700);
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000);
 
@@ -105,18 +122,18 @@ export class TemperatureMonitoringComponent {
       return cube;
     }
 
-    // for(let x = 0; x <= this.sizeStorage.length; x++) { // 80
-    //   for(let y = 0; y <= this.sizeStorage.width; y++) { // 60
-    //     for(let z = 0; z <= this.sizeStorage.height; z++) { // 40
-    //       if(this.temperatureList[x][y][z] != '#') {
-    //         makeCube(geometry, this.getHue(this.temperatureList[x][y][z]), x, z, y);
-    //       }
-    //     }
-    //   }
-    // }
+    for(let x = 0; x <= this.sizeStorage.length; x++) { // 80
+      for(let y = 0; y <= this.sizeStorage.width; y++) { // 60
+        for(let z = 0; z <= this.sizeStorage.height; z++) { // 40
+          if(this.temperatureList[x][y][z] != '#') {
+            makeCube(geometry, this.getHue(this.temperatureList[x][y][z]), x, z, y);
+          }
+        }
+      }
+    }
 
-    makeCube(geometry, 'hsl(105, 100%, 50%)', 1, 1, 1);
-    makeCube(geometry, 'hsl(105, 100%, 50%)', 1, 1, -1);
+    // makeCube(geometry, 'hsl(105, 100%, 50%)', 1, 1, 1);
+    // makeCube(geometry, 'hsl(105, 100%, 50%)', 1, 1, -1);
   }
 
   getHue(nowTemp: any) {

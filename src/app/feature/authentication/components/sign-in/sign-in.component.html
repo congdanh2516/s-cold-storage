@@ -2,17 +2,17 @@
     <div class="sign-in__project-signature">
         COLD STORAGE
     </div>
-    <div class="sign-in__account-info">
+    <form class="sign-in__account-info" [formGroup]="signInForm" (ngSubmit)="signIn()">
         <div class="sign-in__account-info__heading">
             SIGN IN 
         </div>
-        <form class="sign-in__account-info__input" [formGroup]="signInForm" (ngSubmit)="signIn()">
+        <div class="sign-in__account-info__input">
             <div class="sign-in__account-info__input__username">
                 <div class="icon">
                     <fa-icon [icon]="faUser"></fa-icon>
                 </div>
                 <div class="input">
-                    <input type="text" name="" id="" placeholder="Username" formControlName="username">
+                    <input type="text" name="" id="" placeholder="Username" formControlName="email">
                 </div>
             </div>
             <div class="sign-in__account-info__input__password">
@@ -27,27 +27,27 @@
                     <fa-icon [icon]="faEyeSlash" *ngIf="!hiddenPassword"></fa-icon>
                 </div>
             </div>
-        </form>
+        </div>
         <div class="sign-in__account-info__error">
             <app-error-message 
-                *ngIf="(signInForm.get('username')?.errors?.['required'] 
-                && signInForm.get('username')?.touched) && (!signInForm.get('password')?.errors?.['required'] 
+                *ngIf="(signInForm.get('email')?.errors?.['required'] 
+                && signInForm.get('email')?.touched) && (!signInForm.get('password')?.errors?.['required'] 
                 || !signInForm.get('password')?.touched)"
-            >Please enter username</app-error-message>
+            >Please enter email</app-error-message>
             <app-error-message 
                 *ngIf="(signInForm.get('password')?.errors?.['required'] 
-                && signInForm.get('password')?.touched) && (!signInForm.get('username')?.errors?.['required'] 
-                || !signInForm.get('username')?.touched)"
+                && signInForm.get('password')?.touched) && (!signInForm.get('email')?.errors?.['required'] 
+                || !signInForm.get('email')?.touched)"
             >Please enter password</app-error-message>
             <app-error-message 
                 *ngIf="(signInForm.get('password')?.errors?.['required'] 
-                && signInForm.get('password')?.touched) && (signInForm.get('username')?.errors?.['required'] 
-                && signInForm.get('username')?.touched)"
+                && signInForm.get('password')?.touched) && (signInForm.get('email')?.errors?.['required'] 
+                && signInForm.get('email')?.touched)"
             >Please enter username, password</app-error-message>
         </div>
         <div class="sign-in__account-info__button">
             <div class="sign-in__account-info__button__forgot-pass">Forgot password?</div>
             <button class="sign-in__account-info__button__sign-in" type="submit" [disabled]="signInForm.invalid">Sign in</button>
         </div>
-    </div>
+    </form>
 </div>
