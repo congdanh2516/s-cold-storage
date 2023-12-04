@@ -13,6 +13,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SignInStationComponent } from './feature/manager/monitor/components/sign-in-station/sign-in-station.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SensorNetworkComponent } from './feature/manager/monitor/components/sensor-network/sensor-network.component';
+import { LoaderComponent } from './shared/loader/loader.component';
+import { RouterModule } from '@angular/router';
+
 
 @NgModule({
   declarations: [
@@ -21,7 +25,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HeaderComponent,
     ErrorMessageComponent,
     SignInComponent,
-    SignInStationComponent
+    SignInStationComponent,
+    SensorNetworkComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +38,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ReactiveFormsModule,
     MatDialogModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent],

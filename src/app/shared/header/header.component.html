@@ -6,8 +6,12 @@
             COLD STORAGE
         </div>
     </div>
+    <div class="header__menu">
+        <a [routerLink]="['/temperature-monitoring']">Temp monitoring</a>
+        <a [routerLink]="['/sensor-network']">Sensor list</a>
+    </div>
     <div class="header__sign-in-info">
-        <div class="header__sign-in-info__iot-station">
+        <div class="header__sign-in-info__iot-station" *ngIf="usernameIoT!=''">
             <div class="header__sign-in-info__iot-station__icon">
                 <fa-icon [icon]="faChargingStation"></fa-icon>
             </div>
@@ -19,11 +23,23 @@
                 <fa-icon [icon]="faTrash"></fa-icon>
             </div>
         </div>
-        <div class="header__sign-in-info__avatar">
+        <div class="header__sign-in-info__avatar" (click)="openSignOutDialog()">
             <fa-icon [icon]="faCircleUser"></fa-icon>
         </div>
-        <div class="header__sign-in-info__name">
+        <div class="header__sign-in-info__name" (click)="openSignOutDialog()">
             Trinh Tan Song
         </div>
+    </div>
+</div>
+
+<div class="sign-out" *ngIf="signOutDialogOpening !== undefined"
+    (mouseover)="closeSignOutDialogTimeOutOnHover()"
+    (mouseout)="setSignOutDialogTimeOut()"
+    [class.slideDown]="signOutDialogOpening"
+    [class.slideUp]="!signOutDialogOpening && signOutDialogOpening !== undefined"    
+>
+    <div class="sign-out__btn" (click)="logOut()">
+        <fa-icon [icon]="faArrowRightFromBracket"></fa-icon>
+        Đăng xuất
     </div>
 </div>

@@ -49,6 +49,33 @@ export class MonitoringService {
             )
   }
 
+  getListSensor(idStorage: any) {
+    let api = environment.url + `/owner/sensors/?sensor_storage__id=${idStorage}`;
+    let header = new HttpHeaders()
+      .set('Authorization', `Bear ${this.authenticationSV.authToken}`);
+    return this.http.get(api, {headers: header})
+      .pipe(
+        tap((data: any) => {
+          
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  checkLoginIoTLab(idStorage: any) {  //mang rong => chua dang nhap
+    let api = environment.url + `/api/stations/?station_storage__id=${idStorage}`;
+    let header = new HttpHeaders()
+      .set('Authorization', `Bear ${this.authenticationSV.authToken}`);
+    return this.http.get(api);
+  }
+
+  updateConnectIot(idStation: any, account: any) {
+    let api = environment.url + `/api/stations/${idStation}/`;
+    let header = new HttpHeaders()
+      .set('Authorization', `Bear ${this.authenticationSV.authToken}`);
+    return this.http.put(api, account);
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
       console.error('An error occurred:', error.error);

@@ -1,5 +1,6 @@
+@import '../../../assets/scss/sass-config.scss';
 .header {
-    height: 70px;
+    height: 80px;
     padding: 0 40px;
     display: flex;
     justify-content: space-between;
@@ -7,9 +8,23 @@
     -moz-box-shadow:0 5px 8px rgba(182, 182, 182, 0.75);
     -webkit-box-shadow: 0 5px 8px rgba(182, 182, 182, 0.75);
     box-shadow: 0 5px 8px rgba(182, 182, 182, 0.75);
+    position: relative;
+    z-index: 5;
+    background-color: white;
     &__project-signature {
         &__name {
             font-weight: bold;
+            font-size: 20px;
+        }
+    }
+    &__menu {
+        a {
+            text-decoration: none;
+            color: black;
+            font-size: 18px;
+        }
+        a + a {
+            margin-left: 25px;
         }
     }
     &__sign-in-info {
@@ -21,6 +36,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
+            font-size: 20px;
+            height: 50px;
         }
         &__iot-station {
             margin-right: 30px;
@@ -37,5 +55,50 @@
                 }
             }
         }
+    }
+}
+
+.sign-out {
+    width: 180px;
+    // height: 50px;
+    background-color: white;
+    border-radius: 3px;
+    position: absolute;
+    right: 40px;
+    top: 100px;
+    @extend %shadow;
+    padding: 10px;
+    z-index: 1;
+    font-size: 18px;
+    &__btn {
+        cursor: pointer;
+        display: inline-block;
+        padding: 10px;
+    }
+}
+
+.slideDown {
+    animation: slideDown ease .5s forwards;
+}
+
+.slideUp {
+    animation: slideUp ease .5s forwards;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(calc(-100% - 20px));
+    }
+    to {
+        transform: translateY(0%);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(0%)
+    }
+    to {
+        transform: translateY(calc(-100% - 20px))
     }
 }

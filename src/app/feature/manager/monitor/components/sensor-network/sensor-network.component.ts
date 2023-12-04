@@ -6,21 +6,23 @@ import { MatDialog } from '@angular/material/dialog';
 import { SignInStationComponent } from '../sign-in-station/sign-in-station.component';
 
 @Component({
-  selector: 'app-temperature-monitoring',
-  templateUrl: './temperature-monitoring.component.html',
-  styleUrls: ['./temperature-monitoring.component.scss']
+  selector: 'app-sensor-network',
+  templateUrl: './sensor-network.component.html',
+  styleUrls: ['./sensor-network.component.scss']
 })
-export class TemperatureMonitoringComponent {
-
+export class SensorNetworkComponent {
   temperatureList: any = [[[]]];
-  sizeStorage: any = {};
+  sizeStorage: any = {long: 60, height: 40, width: 20};
   minTemperature: number = 0;
   maxTemperature: number = 0;
   averageTemperature: number = 0;
   nameStorage: string = '';
 
-  checkConnectIoTLab: boolean =  false; //kiem tra da ket noi trạm cam bien chua
+  sensorList3D: any = [];
 
+  checkConnectIoTLab: boolean =  false; //kiem tra da ket noi trạm cam bien chua
+  isLoading: boolean = true;
+  
   @ViewChild('cubescene') cubeScene: ElementRef;
   
   constructor(private monitoring_sv: MonitoringService, public dialog: MatDialog) {
@@ -45,6 +47,9 @@ export class TemperatureMonitoringComponent {
     //     this.getTemperatureList();
     //   }
     // })
+    // this.getTemperatureList();
+    // this.main();
+    this.getListSensor();
   }
 
   getTemperatureList() {
@@ -53,31 +58,28 @@ export class TemperatureMonitoringComponent {
       this.sizeStorage.width = storageInfo.storage_width;
       this.sizeStorage.height = storageInfo.storage_height;
       this.nameStorage = storageInfo.storage_name;
-      this.monitoring_sv.cubeSceneTemperatureList(6).subscribe((data: any) => {
-        this.minTemperature = Math.ceil(data.minimun_temperature);
-        this.maxTemperature = Math.ceil(data.maximun_temperature);
-        this.averageTemperature = Math.ceil(data.average_temperature);
-        console.log("cube scene temperature list: ", data);
-        this.temperatureList = data.temperatures;
+      this.getListSensor();
+      setTimeout(() => {
         this.main();
-      })
+        this.isLoading=false;
+      }, 2000)
     })
   }
 
 
   main() {
     console.log("main: ", this.temperatureList);
-    const canvas: any = document.querySelector('#cubescene');
+    const canvas: any = document.querySelector('#sensorscene');
     console.log("canvas: ", canvas);
     const renderer = new THREE.WebGLRenderer({canvas: canvas, alpha: true});
     renderer.setSize(window.innerWidth, 700);
 
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000);
+    const camera = new THREE.PerspectiveCamera(10, window.innerWidth/window.innerHeight, 1, 1000);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     camera.position.z = 75;
-    camera.position.x = 250;
-    camera.position.y = 80;
+    camera.position.x = 100;
+    camera.position.y = 100;
     camera.rotation.set(0.5, 0.4, 0.2);
 
     controls.update();
@@ -106,15 +108,18 @@ export class TemperatureMonitoringComponent {
 
     const group = new THREE.Group();
     scene.add(group);
-    group.position.set(5, 5, 0);
+    group.position.set(0, 0, 0);
 
-    const boxWidth = 5;
-    const boxHeight = 5;
-    const boxDepth = 5;
+    const boxWidth = 50;
+    const boxHeight = 50;
+    const boxDepth = 50;
     const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
-    function makeCube(geometry: any, color: any, x: any, y: any, z: any) {
+    function makeCube(boxWidth: any, boxHeight: any, boxDepth: any, color: any, x: any, y: any, z: any) {
+      const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
       const material = new THREE.MeshPhongMaterial({ color });
+      material.depthTest = false;
       
       const cube = new THREE.Mesh(geometry, material);
       cube.castShadow = true;
@@ -129,36 +134,51 @@ export class TemperatureMonitoringComponent {
       return cube;
     }
 
-    for(let x = 0; x <= this.sizeStorage.length; x++) { // 80
-      for(let y = 0; y <= this.sizeStorage.width; y++) { // 60
-        for(let z = 0; z <= this.sizeStorage.height; z++) { // 40
-          if(this.temperatureList[x][y][z] != '#') {
-            makeCube(geometry, this.getHue(this.temperatureList[x][y][z]), x, z, y);
-          }
-        }
-      }
-    }
-
-    // makeCube(geometry, 'hsl(105, 100%, 50%)', 1, 1, 1);
-    // makeCube(geometry, 'hsl(105, 100%, 50%)', 1, 1, -1);
+    makeCube(this.sizeStorage.long/10, this.sizeStorage.height/10, this.sizeStorage.width/10, 'hsl(105, 100%, 50%, 20%)', 1, 1, 1);
+    makeCube(1, 1, 1, 'hsl(105, 100%, 50%)', 1, 1, 1);
+    this.sensorList3D.forEach((item: any) => {
+      makeCube(0.1, 0.1, 0.1, 'red', item.location.x, item.location.y, item.location.z);
+    })
   }
 
-  getHue(nowTemp: any) {
-    if(nowTemp == '#') {
-      return 'white';
-    }
-    var maxHsl = 240; // maxHsl maps to max temp (here: 20deg past 360)
-    var minHsl = 30; //  minhsl maps to min temp counter theo chiều kim đồng hồ (clickwise)
-    var rngHsl = maxHsl - minHsl;
-  
-    var maxTemp = this.maxTemperature; //
-    var minTemp = this.minTemperature; //
+  getListSensor() {
+    this.monitoring_sv.getListSensor(6).subscribe((data: any) => { //this.localstorage_sv.getItem('storage').id
+      console.log("list of sensor: ", data);
+      this.sensorList3D = data;
+      this.sensorList3D.forEach((sensor: any) => {
+        sensor.location = this.exchangeCoordinate({x: sensor.sensor_x, y: sensor.sensor_y, z: sensor.sensor_z});
+      })
+    })
+  }
+
+  exchangeCoordinate(coordinate: {x: number, y: number, z: number}) {
+    var kq: any = {x: 1, y: 0, z:0};
+    console.log("size storage: ", this.sizeStorage);
+    console.log("coordinate: ", coordinate);
     
-    var rngTemp = maxTemp - minTemp; // 125
-    var degCnt = maxTemp - nowTemp; // 0
-    var hslsDeg = rngHsl / rngTemp;  //210 / 125 = 1.68 Hsl-degs to Temp-degs
-    var returnHue = (360 - ((degCnt * hslsDeg) - (maxHsl - 360))); 
-    return `hsl(${returnHue},100%, 50%)`;
-  }
+    var centerPoint: any = {x: (this.sizeStorage.long-1)/2, y: (this.sizeStorage.width-1)/2, z: (this.sizeStorage.height-1)/2}
+    if(coordinate.x > centerPoint.x) {
+      kq.x = coordinate.x/10 - centerPoint.x/10 - 0.05;
+    }
+    else {
+      kq.x = coordinate.x/10 - centerPoint.x/10 - 0.05 + 0.1;
+    }
 
+    if(coordinate.y > centerPoint.y) {
+      kq.z = coordinate.y/10 - centerPoint.y/10 - 0.05;
+    }
+    else {
+      kq.z = coordinate.y/10 - centerPoint.y/10 - 0.05 + 0.1;
+    }
+
+    if(coordinate.z > centerPoint.z) {
+      kq.y = coordinate.z/10 - centerPoint.z/10 - 0.05;
+    }
+    else {
+      kq.y = coordinate.z/10 - centerPoint.z/10 - 0.05 + 0.1;
+    }
+    kq = [parseFloat(kq.x),parseFloat(kq.y),parseFloat(kq.z)];
+    console.log("exchange: ", kq);
+    return kq;
+  }
 }

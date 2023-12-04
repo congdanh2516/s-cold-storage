@@ -1,6 +1,6 @@
 <!-- <p>temperature-monitoring works!</p> -->
 <app-header></app-header>
-<div class="cube-scene">
+<div class="cube-scene" *ngIf="!checkConnectIoTLab">
     <canvas #cubescene id="cubescene"></canvas>
     <div class="cube-scene__info">
         <div class="cube-scene__info__title">
